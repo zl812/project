@@ -10,31 +10,64 @@
     <?php include "views/public/css.html"?>
 </head>
 <body>
-    <!-- 登录 -->
-    <div class="login">
-        <div class="login-wrap">
-            <div class="avatar">
-                <img src="./uploads/monkey.png" class="img-circle" alt="">
-            </div>
-            <form action="" class="col-xs-offset-1 col-xs-10">
-                <div class="input-group input-group-lg">
+<!-- 登录 -->
+<div class="login">
+    <div class="login-wrap">
+        <div class="avatar">
+            <img src="/views/static/uploads/monkey.png" class="img-circle" alt="">
+        </div>
+        <form action="" class="col-xs-offset-1 col-xs-10">
+            <div class="input-group input-group-lg">
                     <span class="input-group-addon">
                         <i class="fa fa-user"></i>
                     </span>
-                    <input type="text" class="form-control" placeholder="用户名">
-                </div>
-                <div class="input-group input-group-lg">
+                <input type="text" name="tc_name" class="form-control" placeholder="用户名">
+            </div>
+            <div class="input-group input-group-lg">
                     <span class="input-group-addon">
                         <i class="fa fa-key"></i>
                     </span>
-                    <input type="password" class="form-control" placeholder="密码">
-                </div>
-                <button type="submit" class="btn btn-lg btn-primary btn-block">登 录</button>
-            </form>
-        </div>
+                <input type="password" name="tc_pass" class="form-control" placeholder="密码">
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary btn-block">登 录</button>
+        </form>
     </div>
-    
-    <script src="/assets/jquery/jquery.min.js"></script>
-    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+</div>
+<?php include "views/public/js.html"?>
+<script>
+    $(function () {
+//           给表单注册提交事件
+        $("form").submit(function () {
+//                alert("成功了")
+//            表单验证
+            if($("input[name=tc_name]").val().trim()==""){
+                alert("请输入用户名")
+                return false
+            }
+            if($("input[name=tc_pass]").val().trim()==""){
+                alert("请输入密码")
+                return false
+            }
+//表单序列化,必须有name属性,name的命名根据API要求
+            var data = $(this).serialize()
+//           将用户输入的内容发送给接口API进行登录
+            $.ajax({
+                url: "/api/login",
+                type: "post",
+                data: data,
+                success: function (data) {
+//                    console.log(data);
+                    if (data.code == 200) {
+                       $.cookie("userinfo",JSON.stringify(data.result),{path:"/"});
+                        location.href = "/"
+                    }
+                }
+            })
+
+//                阻止默认事件,不让表单自己提交
+            return false
+        })
+    })
+</script>
 </body>
 </html>
